@@ -1,5 +1,3 @@
-
-
 package com.mycompany.app;
 
 import static spark.Spark.*;
@@ -14,19 +12,20 @@ import spark.template.mustache.MustacheTemplateEngine;
 
 public class App
 {
-    public static boolean search(ArrayList<Integer> array, int e) {
-      System.out.println("inside search");
+    public static boolean dividedBy(ArrayList<Integer> array, int e, int a) {
+
       if (array == null) return false;
+      int second=0;
+      int third=0;
 
       for (int elt : array) {
-        if (elt == e) return true;
+        if (elt % e==0) second++;
       }
-      return false;
+      for (int elt : array) {
+        if (elt % a==0) third++;
+      }
+      return second==third;
     }
-    public static int GCD(int a, int b) {
-   		if (b==0) return a;
-   		return GCD(b,a%b);
-	}
 
     public static void main(String[] args) {
         port(getHerokuAssignedPort());
@@ -37,14 +36,25 @@ public class App
           //System.out.println(req.queryParams("input1"));
           //System.out.println(req.queryParams("input2"));
 
+          String input1 = req.queryParams("input1");
+          java.util.Scanner sc1 = new java.util.Scanner(input1);
+          sc1.useDelimiter("[;\r\n]+");
+          java.util.ArrayList<Integer> inputList = new java.util.ArrayList<>();
+          while (sc1.hasNext())
+          {
+            int value = Integer.parseInt(sc1.next().replaceAll("\\s",""));
+            inputList.add(value);
+          }
+          System.out.println(inputList);
 
-          String input1 = req.queryParams("input1").replaceAll("\\s","");
-          int input1AsInt = Integer.parseInt(input1);
 
           String input2 = req.queryParams("input2").replaceAll("\\s","");
           int input2AsInt = Integer.parseInt(input2);
+	  
+	  String input3 = req.queryParams("input3").replaceAll("\\s","");
+          int input3AsInt = Integer.parseInt(input3);
 
-          int result = App.GCD(input1AsInt, input2AsInt);
+          boolean result = App.dividedBy(inputList, input2AsInt, input3AsInt);
 
          Map map = new HashMap();
           map.put("result", result);
@@ -60,6 +70,7 @@ public class App
             },
             new MustacheTemplateEngine());
     }
+    
 
     static int getHerokuAssignedPort() {
         ProcessBuilder processBuilder = new ProcessBuilder();
